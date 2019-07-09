@@ -3,11 +3,11 @@
 module EasyPost
   class Connection::Post < Connection::Base
     def self.call(resource_name, payload)
-      new(resource_name, payload).post
+      new(resource_name, payload: payload).call
     end
 
-    def post
-      connection.post(path, payload)
+    def call
+      connection.post(path, options[:payload])
     end
   end
 end

@@ -2,13 +2,17 @@
 
 module EasyPost
   class Connection::Base
-    attr_reader :resource_name,
-      :payload
+    private_class_method :new
 
-    def initialize(resource_name, payload = nil)
+    attr_reader :resource_name,
+      :options
+
+    def initialize(resource_name, options = {})
       @resource_name = resource_name
-      @payload       = payload
+      @options       = options
     end
+
+    private
 
     SSL_OPTIONS = {
       verify:  OpenSSL::SSL::VERIFY_PEER,
@@ -21,8 +25,10 @@ module EasyPost
         builder.request  :json
         builder.request  :retry
         builder.request  :basic_auth, EasyPost::API_KEY, nil
-        builder.response :logger, Logger.new($stderr)
-        builder.response :json, content_type: "application/json"
+        builder.response :logger, EasyPost::LOGGER
+        builder.response :json,
+          content_type:   "application/json",
+          parser_options: { symbolize_names: true }
         builder.adapter  Faraday.default_adapter
       end
     end
@@ -35,6 +41,10 @@ module EasyPost
 
     def path
       "/#{EasyPost::API_VERSION}/#{resource_name.pluralize}"
+    end
+
+    def resource_class
+      "EasyPost::#{resource_name.camelize}".constantize
     end
   end
 end

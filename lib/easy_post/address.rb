@@ -1,17 +1,10 @@
 # frozen_string_literal: true
 
 module EasyPost
-  # EasyPost::Address.create(
-  #   street1: "417 MONTGOMERY ST",
-  #   street2: "FLOOR 5",
-  #   city: "SAN FRANCISCO",
-  #   state: "CA",
-  #   zip: "94104",
-  #   country: "US",
-  #   company: "EasyPost",
-  #   phone: "+1 (415) 123-4567"
-  # )
   class Address < EasyPost::Object
+    include Creatable
+    include Retrievable
+
     attr_reader :id,
       :object,
       :mode,
@@ -32,7 +25,9 @@ module EasyPost
       :phone,
       :email,
       :federal_tax_id,
-      :state_tax_id,
-      :verifications
+      :state_tax_id
+
+    attr_reader :verifications,
+      coerce: true
   end
 end

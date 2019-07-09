@@ -4,44 +4,61 @@ module EasyPost
   class Object
     include ActiveModel::Model
 
+    require "easy_post/object/creatable"
+    require "easy_post/object/retrievable"
+
+    # TODO: de-uglify
+    # :reek:TooManyStatements
+    # :reek:NestedIterators
     def self.attr_reader(*names)
-      attributes.concat(names)
-      super(*names)
+      options = names.pop if names.last.is_a?(Hash)
+      attrs   = names.reject { |name| name.is_a?(Hash) }
+      attributes.concat(attrs)
+
+      super(*attrs).tap do |_|
+        options = Hash(options)
+        return unless options.key?(:coerce)
+
+        attrs.each do |attr|
+          define_method attr do
+            klass = options[:coerce]
+            if klass.is_a?(TrueClass)
+              klass = "EasyPost::#{attr.to_s.camelize}".constantize
+            end
+
+            case value = attributes[attr]
+            when Hash  then klass.new(value)
+            when Array then value.map { |value| klass.new(value) }
+            else value
+            end
+          end
+        end
+      end
     end
 
     def self.attributes
       @attributes ||= []
     end
 
-    def self.create(attributes = {})
-      new(attributes).save
-    end
-
-    def save
-      payload = attributes.except(
-        :id, :object, :mode, :created_at, :updated_at
-      )
-      response = Connection::Post.call(resource_name, payload)
-      return unless response.success?
-
-      self.class.new(response.body)
-    end
-
     def attributes
-      Hash[self.class.attributes.map { |name| [name, send(name)] }]
+      Hash[
+        self.class.attributes.map do |name|
+          [name, instance_variable_get(:"@#{name}")]
+        end
+      ]
     end
 
-    def initialize(attrs = {})
-      attrs.deep_symbolize_keys.each do |name, value|
-        next unless self.class.attributes.include?(name)
-
+    def initialize(attributes = {})
+      self.class.attributes.each do |name|
+        value = attributes.with_indifferent_access[name]
         instance_variable_set(:"@#{name}", value)
       end
     end
 
-    private
+    delegate :resource_name,
+      to: :class
 
-    def resource_name
+    def self.resource_name
       model_name.element
     end
   end
