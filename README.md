@@ -21,12 +21,13 @@ Or install it yourself as:
 
 ## Usage
 
+This gem expects the EasyPost API key to be set in the env var `EASY_POST_API_KEY`:
 ```sh
 $ EASY_POST_API_KEY="..." ./bin/console
 ```
 
+To create or fetch an [Address](https://www.easypost.com/docs/api#addresses) object:
 ```rb
-# in console
 address = EasyPost::Address.create(
   street1: "417 Montgomery St.",
   street2: "5th Floor",
@@ -42,10 +43,22 @@ address = EasyPost::Address.create(
 
 address = EasyPost::Address.fetch("adr_cf1f297e9e9745b5baa9f38e39821cf7")
 # => #<EasyPost::Address:0x00007fa5af11f498 @id="adr_...", @object="Address", ...>
+```
 
+Notice that associations (where applicable) that are [EasyPost Objects](https://www.easypost.com/docs/api#objects) themselves are first-class citizens:
+```rb
 address.verifications
 # => #<EasyPost::Verifications:0x00007fa5aea77aa0 @zip4=nil, @delivery={"success"=>true, "errors"=>[], ...>
 
+address.verifications.delivery
+# => #<EasyPost::Verification:0x00007fa5af2f02e0 @success=true, @errors=[], @details={"latitude"=> ...>
+
+address.verifications.delivery.details
+# => #<EasyPost::VerificationDetails:0x00007fa5b0059fd0 @latitude=37.79298, ...>
+```
+
+For [Parcels](https://www.easypost.com/docs/api#parcels) objects:
+```rb
 parcel = EasyPost::Parcel.create(
   length: 20.2,
   width:  10.9,
