@@ -29,7 +29,7 @@ module EasyPost
   API_SUBDOMAIN = ENV.fetch("EASY_POST_API_SUBDOMAIN", "api").freeze
   API_DOMAIN    = ENV.fetch("EASY_POST_API_DOMAIN", "easypost.com").freeze
   API_VERSION   = ENV.fetch("EASY_POST_API_VERSION", "v2").freeze
-  API_KEY       = ENV.fetch("EASY_POST_API_KEY", "EZTK1bf0f74ffe814c0ea2aef621d8b46759aftdjk67huaFsaMUMauVDw").freeze
+  API_KEY       = ENV["EASY_POST_API_KEY"]
 
   LOGGER        = Logger.new($stderr)
 end
