@@ -30,32 +30,32 @@ $ EASY_POST_API_KEY="..." ./bin/console
 address = EasyPost::Address.create(
   street1: "417 Montgomery St.",
   street2: "5th Floor",
-  city: "San Francisco",
-  state: "CA",
-  zip: "94104",
+  city:    "San Francisco",
+  state:   "CA",
+  zip:     "94104",
   country: "US",
   company: "EasyPost",
-  phone: "+1 (415) 123-4567",
-  verify: [:delivery]
+  phone:   "+1 (415) 123-4567",
+  verify:  %i[delivery]
 )
-# => #<EasyPost::Address:0x00007fa5af11f498 @id="adr_cf1f297e9e9745b5baa9f38e39821cf7", @object="Address", ...>
+# => #<EasyPost::Address:0x00007fa5af11f498 @id="adr_...", @object="Address", ...>
 
 address = EasyPost::Address.fetch("adr_cf1f297e9e9745b5baa9f38e39821cf7")
-# => #<EasyPost::Address:0x00007fa5af11f498 @id="adr_cf1f297e9e9745b5baa9f38e39821cf7", @object="Address", ...>
+# => #<EasyPost::Address:0x00007fa5af11f498 @id="adr_...", @object="Address", ...>
 
 address.verifications
 # => #<EasyPost::Verifications:0x00007fa5aea77aa0 @zip4=nil, @delivery={"success"=>true, "errors"=>[], ...>
 
 parcel = EasyPost::Parcel.create(
   length: 20.2,
-  width: 10.9,
+  width:  10.9,
   height: 5,
   weight: 65.9
 )
-# => #<EasyPost::Parcel:0x00007fa5af25b780 @id="prcl_ea5a3dd8c93240a3be21e1dc9835fbc7", @object="Parcel", ...>
+# => #<EasyPost::Parcel:0x00007fa5af25b780 @id="prcl_...", @object="Parcel", ...>
 
 parcel.find("prcl_ea5a3dd8c93240a3be21e1dc9835fbc7")
-# => #<EasyPost::Parcel:0x00007fa5af25b780 @id="prcl_ea5a3dd8c93240a3be21e1dc9835fbc7", @object="Parcel", ...>
+# => #<EasyPost::Parcel:0x00007fa5af25b780 @id="prcl_...", @object="Parcel", ...>
 ```
 
 ## Development
